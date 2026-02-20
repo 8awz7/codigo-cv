@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portafolio 3D</title>
+
+<!-- THREE JS -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+:root{
+  --neon:#8cff00;
+  --bg:#050505;
+}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:white;
+}
+
+header{
+  text-align:center;
+  padding:40px 20px;
+}
+
+h1{
+  color:var(--neon);
+  letter-spacing:2px;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.products-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+}
+
+.product-card{
+  background:#0e0e0e;
+  border:1px solid var(--neon);
+  border-radius:15px;
+  overflow:hidden;
+  transition:.3s;
+}
+
+.product-card:hover{
+  transform:translateY(-5px);
+}
+
+.canvas-container{
+  height:280px;
+  background:#000;
+  position:relative;
+}
+
+.product-info{
+  padding:20px;
+}
+
+.product-price{
+  color:var(--neon);
+  font-size:1.3rem;
+  font-weight:bold;
+}
+
+.btn{
+  margin-top:10px;
+  padding:10px;
+  width:100%;
+  background:var(--neon);
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.status-badge{
+  position:absolute;
+  top:10px;
+  right:10px;
+  font-size:12px;
+  background:black;
+  padding:5px 8px;
+  border:1px solid var(--neon);
+}
+
+.status-ok{color:#00ffae}
+.status-fallback{color:orange}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>PORTAFOLIO 3D INTERACTIVO</h1>
+  <p>Modelos GLB en tiempo real con ThreeJS</p>
+</header>
+
+<div class="container">
+
+<div class="products-grid">
+
+<article class="product-card">
+<div class="canvas-container" id="canvas-1">
+<span class="status-badge" id="status-1">Cargando...</span>
+</div>
+<div class="product-info">
+<h2>Modelo 1</h2>
+<p>Producto interactivo 3D.</p>
+<div class="product-price">Demo</div>
+<button class="btn">Ver proyecto</button>
+</div>
+</article>
+
+<article class="product-card">
+<div class="canvas-container" id="canvas-2">
+<span class="status-badge" id="status-2">Cargando...</span>
+</div>
+<div class="product-info">
+<h2>Modelo 2</h2>
+<p>Producto interactivo 3D.</p>
+<div class="product-price">Demo</div>
+<button class="btn">Ver proyecto</button>
+</div>
+</article>
+
+<article class="product-card">
+<div class="canvas-container" id="canvas-3">
+<span class="status-badge" id="status-3">Cargando...</span>
+</div>
+<div class="product-info">
+<h2>Modelo 3</h2>
+<p>Producto interactivo 3D.</p>
+<div class="product-price">Demo</div>
+<button class="btn">Ver proyecto</button>
+</div>
+</article>
+
+</div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const products=[
+{
+ id:'canvas-1',statusId:'status-1',
+ url:'models/model1.glb',fallback:'box'
+},
+{
+ id:'canvas-2',statusId:'status-2',
+ url:'models/model2.glb',fallback:'sphere'
+},
+{
+ id:'canvas-3',statusId:'status-3',
+ url:'models/model3.glb',fallback:'torus'
+}
+];
+
+function fallback(type){
+const mat=new THREE.MeshStandardMaterial({color:0x8cff00});
+
+if(type==='sphere')return new THREE.Mesh(new THREE.SphereGeometry(1,32,32),mat);
+if(type==='torus')return new THREE.Mesh(new THREE.TorusKnotGeometry(1,0.3,100,16),mat);
+
+return new THREE.Mesh(new THREE.BoxGeometry(1.5,1.5,1.5),mat);
+}
+
+function init3D(p){
+
+const container=document.getElementById(p.id);
+const badge=document.getElementById(p.statusId);
+
+const scene=new THREE.Scene();
+
+const camera=new THREE.PerspectiveCamera(45,container.clientWidth/container.clientHeight,0.1,100);
+camera.position.set(0,1,4);
+
+const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
+renderer.setSize(container.clientWidth,container.clientHeight);
+container.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffffff,0.7));
+
+const light=new THREE.DirectionalLight(0xffffff,1);
+light.position.set(5,5,5);
+scene.add(light);
+
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableZoom=false;
+controls.autoRotate=true;
+
+let model;
+
+const loader=new GLTFLoader();
+loader.load(
+ p.url,
+ gltf=>{
+ model=gltf.scene;
+
+ const box=new THREE.Box3().setFromObject(model);
+ const size=box.getSize(new THREE.Vector3()).length();
+ const scale=2/size;
+ model.scale.setScalar(scale);
+
+ scene.add(model);
+ badge.textContent='Modelo cargado';
+ badge.className='status-badge status-ok';
+ },
+ undefined,
+ ()=>{
+ model=fallback(p.fallback);
+ scene.add(model);
+ badge.textContent='Fallback';
+ badge.className='status-badge status-fallback';
+ }
+);
+
+function animate(){
+requestAnimationFrame(animate);
+controls.update();
+renderer.render(scene,camera);
+}
+animate();
+}
+
+products.forEach(init3D);
+</script>
+
+</body>
+</html>

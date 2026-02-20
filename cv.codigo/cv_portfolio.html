@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV Portafolio</title>
+
+  <!-- CSS -->
+  <style>
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:#000;
+      color:#fff;
+      transition:0.3s;
+    }
+
+    .light{
+      background:#f5f5f5;
+      color:#111;
+    }
+
+    .section{
+      padding:40px 80px;
+    }
+
+    .title{
+      text-align:right;
+      font-size:40px;
+      margin-bottom:20px;
+      letter-spacing:2px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:20px;
+    }
+
+    .card{
+      border:1px solid #8cff00;
+      padding:15px;
+      border-radius:10px;
+    }
+
+    .program{
+      background:#8cff00;
+      color:#000;
+      padding:15px;
+      text-align:center;
+      font-weight:bold;
+      border-radius:5px;
+    }
+
+    .project{
+      background:#111;
+      height:120px;
+      border:1px solid #8cff00;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .btn{
+      position:fixed;
+      top:15px;
+      left:15px;
+      padding:10px 15px;
+      background:#8cff00;
+      border:none;
+      cursor:pointer;
+      font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- BOTÓN MODO OSCURO -->
+  <button id="darkBtn" class="btn">Modo oscuro</button>
+
+  <!-- HABILIDADES -->
+  <section class="section">
+    <h1 class="title">MIS HABILIDADES</h1>
+
+    <div class="grid skills">
+      <div class="card">
+        <h3>DIBUJO Y OBSERVACIÓN</h3>
+        <p>Capacidad para representar formas con proporción y anatomía a partir de la observación.</p>
+      </div>
+
+      <div class="card">
+        <h3>COMPOSICIÓN</h3>
+        <p>Conocimiento sobre cómo organizar elementos visuales.</p>
+      </div>
+
+      <div class="card">
+        <h3>COLOR Y LUZ</h3>
+        <p>Uso adecuado del color, la luz y el contraste.</p>
+      </div>
+
+      <div class="card">
+        <h3>TÉCNICAS</h3>
+        <p>Dominio de técnicas tradicionales y digitales.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMAS -->
+  <section class="section">
+    <h1 class="title">PROGRAMAS</h1>
+
+    <div class="grid programs">
+      <div class="program">CLIP STUDIO</div>
+      <div class="program">PHOTOSHOP</div>
+      <div class="program">BLENDER</div>
+      <div class="program">PAINT TOOL SAI</div>
+    </div>
+  </section>
+
+  <!-- PROYECTOS -->
+  <section class="section">
+    <h1 class="title">MIS PROYECTOS</h1>
+
+    <div class="grid projects">
+      <div class="project">Proyecto 1</div>
+      <div class="project">Proyecto 2</div>
+      <div class="project">Proyecto 3</div>
+      <div class="project">Proyecto 4</div>
+    </div>
+  </section>
+
+  <!-- JS -->
+  <script>
+    const btn = document.getElementById("darkBtn");
+
+    btn.addEventListener("click",()=>{
+      document.body.classList.toggle("light");
+    });
+  </script>
+
+</body>
+</html>
